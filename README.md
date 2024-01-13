@@ -6,7 +6,17 @@ The `resources` directory contains two subdirectories: `data` and `output`. The 
 The first row of these files should contain headers, other rows should contain the other data, the id of the measurement is contained in the first column, 
 while the diameter measurement is located in the second column. 
 
-Results of the analysis will be saved in the `output` directory. If this directory does not exist in your codebase, you should create it to prevent errors.
+Results of the analysis will be saved in the `output` directory. 
+If any of the resource directories does not exist, you should create it. The directory structure should look like this:
+
+```
+PAI-data-analysis/
+   resources/
+      data/
+         ..your csv files..
+      output/
+         ..your output files..
+```
 
 ## Data Gathering
 The `data-gathering` directory contains [ImageJ](https://imagej.net/ij/) macros to analyze photoacoustic images. It contains two files:
