@@ -42,6 +42,10 @@ In order to execute any of the two files you must:
    - `INPUT_PATH`: path to the .csv file containing the data e.g. `'../resources/data/532_OR_55_index0.csv'`
 4. Execute the `.sh` files (double click should work).
 
+If you wish to perform an analysis for all `.csv` files in a folder, you can execute the [full_analysis.sh](data-analysis/full_analysis.sh) file.
+In this file you have two variables: `INPUT_FOLDER` and `OUTPUT_FOLDER` which define paths to the input and output folders respectively. The default values
+for these variables should work if you follow the directory structure described above, otherwise you can adjust these variables to suit your needs.
+
 ### Using a Terminal
 You can also execute the python scripts in a terminal by using these steps:
 1. Make sure python is installed in your terminal (try executing the following command):

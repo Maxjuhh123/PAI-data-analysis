@@ -24,15 +24,23 @@ def get_args() -> Namespace:
     return parser.parse_args()
 
 
+def generate_graph_for_csv(file_path: str, output_type: str, output_folder: str) -> None:
+    """
+    For a single csv file and graph type, generate the graph and save it to the output folder.
+
+    :param file_path: Path to the file
+    :param output_type: Type of output graph
+    :param output_folder: Path to output folder
+    """
+    diameter_measurements = read_diameter_measurements(file_path)
+    file_name = extract_file_name(file_path)
+    generate_analysis_visualization(diameter_measurements, output_type, output_folder, file_name)
+
+
 if __name__ == '__main__':
     """
     Entry point of the application.
     """
     args = get_args()
-    file_path = args.file_path
-    diameter_measurements = read_diameter_measurements(file_path)
 
-    output_type = args.output_type
-    output_folder_path = args.output_folder
-    file_name = extract_file_name(file_path)
-    generate_analysis_visualization(diameter_measurements, output_type, output_folder_path, file_name)
+    generate_graph_for_csv(args.file_path, args.output_type, args.output_folder)
