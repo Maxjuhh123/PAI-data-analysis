@@ -30,20 +30,22 @@ This module contains python code and bash scripts to easily generate data visual
 The visualization that can currently be generated are:
 - Histograms
 - Violin Plots
+- Scatter Plots
 
 You can run the analysis in two ways:
 
 ### Using Bash Scripts
-The easiest way is by using the two bash scripts [histogram.sh](data-analysis/histogram.sh) and [violin.sh](data-analysis/violin.sh) which generate histograms and violin plots respectively.
+The easiest way is by using bash scripts [histogram.sh](data-analysis/histogram.sh), [violin.sh](data-analysis/violin.sh), and [scatter.sh](data-analysis/scatter.sh), which generate histograms, violin plots, and scatter plots respectively.
 In order to execute any of the two files you must:
 1. Be able to execute `.sh` files on your computer.
 2. Have python and pip installed on your computer.
-3. In both files set the following variable:
+3. In all three files set the following variables:
    - `INPUT_PATH`: path to the .csv file containing the data e.g. `'../resources/data/532_OR_55_index0.csv'`
+   - `PIXEL_MEASUREMENTS`: set to `true` if you want your results in pixels and `false` if you want them in nm.
 4. Execute the `.sh` files (double click should work).
 
 If you wish to perform an analysis for all `.csv` files in a folder, you can execute the [full_analysis.sh](data-analysis/full_analysis.sh) file.
-In this file you have two variables: `INPUT_FOLDER` and `OUTPUT_FOLDER` which define paths to the input and output folders respectively. The default values
+In this file you have a few variables: `INPUT_FOLDER`, `OUTPUT_FOLDER`, and `PIXEL_MEASUREMENTS` which define paths to the input and output folders and whether we want pixel measurements (true) or nm (false) measurements respectively. The default values
 for these variables should work if you follow the directory structure described above, otherwise you can adjust these variables to suit your needs.
 
 ### Using a Terminal
@@ -60,8 +62,14 @@ You can also execute the python scripts in a terminal by using these steps:
     pip install -r requirements.txt
     ```
     ```commandline
-    python src/main.py --file_path file-path --output_type output-type --output_folder output-path
+    python src/main.py --file_path file-path --output_type output-type --output_folder output-path --pixel_measurements pixel-measurements
     ```
    - file-path: Replace this value with the path to your data file e.g. `../resources/data/532_OR_55_index0.csv`
    - output-type: Replace this value with the type of graph you wish to produce (histogram or violinplot)
    - output-path: Replace this value with the path to your output folder (default is ../resources/data)
+   - pixel-measurements: Replace this value with `true` or `false` depending on if you want your measurements in pixels (True) or nm (False)
+### Changing Constants
+There are a few constants located in the python scripts which you can customize:
+- `HISTOGRAM_BIN_COUNT`: The amount of bins to use in histograms
+- `MAX_DIAMETER`: The maximum diameter (in nm) to consider in the analysis
+- `PIXEL_SIZE`: Size of a pixel (in nm)

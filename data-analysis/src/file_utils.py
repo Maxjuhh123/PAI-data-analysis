@@ -4,6 +4,9 @@ Module for file utility.
 import csv
 import os
 from typing import IO, List
+
+from matplotlib import pyplot as plt
+
 from diameter_measurement import DiameterMeasurement, read_diameter_measurement_row
 
 
@@ -43,3 +46,13 @@ def read_diameter_measurements(file_path: str) -> List[DiameterMeasurement]:
     next(reader, None)
 
     return [read_diameter_measurement_row(row) for row in reader]
+
+
+def save_figure(path: str) -> None:
+    """
+    Save a figure to a file.
+
+    :param path: Path to save the figure to.
+    """
+    plt.savefig(path)
+    print(f'saved figure to {path}')
