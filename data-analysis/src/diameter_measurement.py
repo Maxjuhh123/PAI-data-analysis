@@ -2,17 +2,18 @@
 Module for diameter measurement functionality.
 """
 from typing import List
+from measurement import Measurement
 
 
-class DiameterMeasurement:
-    PIXEL_SIZE = 5  # Each pixel is 5nm
-
+class DiameterMeasurement(Measurement):
     """
     Represent a diameter measurement.
     """
+    PIXEL_SIZE = 5  # Each pixel is 5 microns
 
-    def __init__(self, vessel_id: int, diameter: float):
-        self.vessel_id = vessel_id
+    def __init__(self, measurement_id: int, diameter: float):
+        super().__init__()
+        self.vessel_id = measurement_id
         self.diameter = diameter  # Diameter in pixels
 
     def __repr__(self):
@@ -38,14 +39,14 @@ def read_diameter_measurement_row(row: List[str]) -> DiameterMeasurement:
 
 def filter_diameter_measurements(measurements: List[DiameterMeasurement], max_diameter: float, pixel_measurements: bool) -> List[float]:
     """
-    Filter diameter measurements and transform to nm if specified.
+    Filter diameter measurements and transform to microns if specified.
 
     :param measurements: The measurements
-    :param max_diameter: The maximum allowed diameter (in nm)
-    :param pixel_measurements: Whether you want your results to be measured in pixels (True) or nm (False)
-    :return: The list of filtered measurements in pixels or nm
+    :param max_diameter: The maximum allowed diameter (in microns)
+    :param pixel_measurements: Whether you want your results to be measured in pixels (True) or microns (False)
+    :return: The list of filtered measurements in pixels or microns
     """
     factor = 1 if pixel_measurements else DiameterMeasurement.PIXEL_SIZE
-    max_allowed = max_diameter / DiameterMeasurement.PIXEL_SIZE if pixel_measurements else max_diameter
+    max_allowed = max_diameter / DiameterMeasurement.PIXEL_SIZE
 
     return [factor * measurement.diameter for measurement in measurements if measurement.diameter <= max_allowed]

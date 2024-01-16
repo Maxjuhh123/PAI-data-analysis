@@ -4,7 +4,7 @@ pip install -r requirements.txt
 # Change these two values to represent the input path to the csv file and output folder path respectively
 INPUT_FOLDER='../resources/data'
 OUTPUT_FOLDER='../resources/output'
-PIXEL_MEASUREMENTS='true'
+PIXEL_MEASUREMENTS='false'
 
 for file_path in "$INPUT_FOLDER"/*; do
         echo "Generating histogram for $INPUT_PATH"

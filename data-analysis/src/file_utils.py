@@ -8,6 +8,7 @@ from typing import IO, List
 from matplotlib import pyplot as plt
 
 from diameter_measurement import DiameterMeasurement, read_diameter_measurement_row
+from branch_measurement import BranchMeasurement, read_branch_measurements_from_row
 
 
 def load_csv(file_path: str) -> IO:
@@ -46,6 +47,22 @@ def read_diameter_measurements(file_path: str) -> List[DiameterMeasurement]:
     next(reader, None)
 
     return [read_diameter_measurement_row(row) for row in reader]
+
+
+def read_branch_measurements(file_path: str) -> List[BranchMeasurement]:
+    """
+    Read branch measurements from csv file given the path to the file.
+
+    :param file_path: Path to the csv file.
+    :return: List containing the branch measurements
+    """
+    csv_file = load_csv(file_path)
+    reader = csv.reader(csv_file)
+
+    # Skip header row
+    next(reader, None)
+
+    return [read_branch_measurements_from_row(row) for row in reader]
 
 
 def save_figure(path: str) -> None:

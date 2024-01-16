@@ -41,11 +41,11 @@ In order to execute any of the two files you must:
 2. Have python and pip installed on your computer.
 3. In all three files set the following variables:
    - `INPUT_PATH`: path to the .csv file containing the data e.g. `'../resources/data/532_OR_55_index0.csv'`
-   - `PIXEL_MEASUREMENTS`: set to `true` if you want your results in pixels and `false` if you want them in nm.
+   - `PIXEL_MEASUREMENTS`: set to `true` if you want your results in pixels and `false` if you want them in microns.
 4. Execute the `.sh` files (double click should work).
 
 If you wish to perform an analysis for all `.csv` files in a folder, you can execute the [full_analysis.sh](data-analysis/full_analysis.sh) file.
-In this file you have a few variables: `INPUT_FOLDER`, `OUTPUT_FOLDER`, and `PIXEL_MEASUREMENTS` which define paths to the input and output folders and whether we want pixel measurements (true) or nm (false) measurements respectively. The default values
+In this file you have a few variables: `INPUT_FOLDER`, `OUTPUT_FOLDER`, and `PIXEL_MEASUREMENTS` which define paths to the input and output folders and whether we want pixel measurements (true) or microns (false) measurements respectively. The default values
 for these variables should work if you follow the directory structure described above, otherwise you can adjust these variables to suit your needs.
 
 ### Using a Terminal
@@ -67,9 +67,9 @@ You can also execute the python scripts in a terminal by using these steps:
    - file-path: Replace this value with the path to your data file e.g. `../resources/data/532_OR_55_index0.csv`
    - output-type: Replace this value with the type of graph you wish to produce (histogram or violinplot)
    - output-path: Replace this value with the path to your output folder (default is ../resources/data)
-   - pixel-measurements: Replace this value with `true` or `false` depending on if you want your measurements in pixels (True) or nm (False)
+   - pixel-measurements: Replace this value with `true` or `false` depending on if you want your measurements in pixels (True) or microns (False)
 ### Changing Constants
 There are a few constants located in the python scripts which you can customize:
 - `HISTOGRAM_BIN_COUNT`: The amount of bins to use in histograms
-- `MAX_DIAMETER`: The maximum diameter (in nm) to consider in the analysis
-- `PIXEL_SIZE`: Size of a pixel (in nm)
+- `MAX_DIAMETER`: The maximum diameter (in microns) to consider in the analysis
+- `PIXEL_SIZE`: Size of a pixel (in microns)

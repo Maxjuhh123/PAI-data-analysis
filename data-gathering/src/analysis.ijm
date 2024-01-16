@@ -124,84 +124,6 @@ function analyzeVesselLength(filePath, row, vasculatureLengths) {
 }
 
 /**
- * Analyze a single branch.
- */ 
-function analyzeBranch(v1x, v1y, v2x, v2y) {
-	// Analyze a single branch, assuming the original binary image is open?
-	// Emma do your thing here
-	width = v2x - v1x + 1;
-	height = v2y - v1y + 1;
-	print("x: " + v1x);
-	print("y: " + v1y);
-	print("x2: " + v2x);
-	print("y2: " + v2y);
-	print("width: " + width);
-	print("height: " + height);
-	if (width > 0 && height > 0) {
-		setTool("rectangle");
-		makeRectangle(v1x - 1, v1y - 1, width, height);
-		roiManager("Add");
-	}
-}
-
-/**
- * Analyze vessel branches. 
- */ 
-function branchAnalysis(filePath, numBranchesList, averageBranchLengths, maximumBranchLengths, row) {
-	getOriginalBinaryImage(filePath);
-	
-	// First get general branch info
-	run("Clear Results");
-	run("Set Measurements...", "area_fraction area mean min centroid perimeter redirect=None decimal=2"); 
-	run("Duplicate...", " "); 
-	run("Skeletonize");
-	run("Analyze Skeleton (2D/3D)", "prune=none show"); 
-	// you get as a result many parameters including Number of junctions, branches, branch length etc. 
-	// Detailed information you can find under: https://imagej.net/AnalyzeSkeleton 
-	numBranches = getResult("# Branches", 0);
-	averageBranchLength = getResult("Average Branch Length", 0);
-	maximumBranchLength = getResult("Maximum Branch Length", 0);
-
-	// Get branch coordinates
-	getOriginalBinaryImage(filePath);
-	run("Clear Results");
-	run("Set Measurements...", "area_fraction area mean min centroid perimeter redirect=None decimal=2"); 
-	run("Duplicate...", " "); 
-	run("Analyze Skeleton (2D/3D)", "prune=none show"); 
-	selectWindow("Branch information");
-	v1xs = Table.getColumn("V1 x");
-	v1ys = Table.getColumn("V1 y");
-	v2xs = Table.getColumn("V2 x");
-	v2ys = Table.getColumn("V2 y");
-	selectWindow("Results");
-	
-	getOriginalBinaryImage(filePath);
-	
-	// Analyze each branch
-	for (i = 0; i < v1xs.length; i++) {
-		v1x = v1xs[i];
-		v1y = v1ys[i];
-		v2x = v2xs[i];
-		v2y = v2ys[i];
-		
-		analyzeBranch(v1x, v1y, v2x, v2y);
-	}
-	
-	// I have no idea how to automate the popup windows.....
-	// you should save the file when prompted and click no for all the questions
-	roiManager("Show All without labels");
-	n = roiManager("count");
-	for (i = 0; i < n; i++) {
-    	roiManager("select", i);
-  		run("Diameter Measurements", "distance=222 distance_0=222");
-	}
-	// Update result arrays
-	numBranchesList[row] = numBranches;
-	averageBranchLengths[row] = averageBranchLength;
-	maximumBranchLengths[row] = maximumBranchLength;
-}
-
-/**
  * Analyze distances between vessels.
  */
 function analyzeVesselDistances(filePath, row, meanVesselDistances, minVesselDistances) {
@@ -222,6 +144,29 @@ function analyzeVesselDistances(filePath, row, meanVesselDistances, minVesselDis
 }
 
 /**
+ * Analyze branches in an image.
+ */
+function analyzeBranches(filePath, row, numBranchesList, averageBranchLengths, maximumBranchLengths) {
+	// Analyze original binary image
+	getOriginalBinaryImage(filePath);
+	run("Clear Results");
+	run("Set Measurements...", "area_fraction area mean min centroid perimeter redirect=None decimal=2"); 
+	run("Duplicate...", " "); 
+	run("Skeletonize");
+	run("Analyze Skeleton (2D/3D)", "prune=none show"); 
+	
+	// Extract results from table
+	numBranches = getResult("# Branches", 0);
+	averageBranchLength = getResult("Average Branch Length", 0);
+	maximumBranchLength = getResult("Maximum Branch Length", 0);
+
+	// Save results in arrays
+	numBranchesList[row] = numBranches;
+	averageBranchLengths[row] = averageBranchLength;
+	maximumBranchLengths[row] = maximumBranchLength;
+}
+
+/**
  * Analyze a single image, gather various data and save it to respective arrays.
  */
 function processFile(
@@ -233,16 +178,16 @@ function processFile(
 	run("Clear Results");
 	
 	//1 Area fraction 
-	//analyzeArea(filePath, row, areaPercentages);
+	analyzeArea(filePath, row, areaPercentages);
 
 	//2 Vascular length 
-	//analyzeVesselLength(filePath, row, vasculatureLengths);
-
-	//3 Vascular branches  
-	branchAnalysis(filePath, numBranchesList, averageBranchLengths, maximumBranchLengths, row);
-
+	analyzeVesselLength(filePath, row, vasculatureLengths);
+	
+	//3 Analyze Branches
+	analyzeBranches(filePath, row, numBranchesList, averageBranchLengths, maximumBranchLengths);
+	
 	//4 Nearest neighbor distance 
-	//analyzeVesselDistances(filePath, row, meanVesselDistances, minVesselDistances);
+	analyzeVesselDistances(filePath, row, meanVesselDistances, minVesselDistances);
 	
 	// Update result arrays
 	labels[row] = filePath;
@@ -254,6 +199,9 @@ function processFile(
 	print("Finished analyzing: " + filePath + ".");
 }
 
+/**
+ * Save the results table to a csv file.
+ */
 function saveResultsToFile(folderPath) {
 	outputPath = folderPath + "/output.csv";
 	saveAs("Results", outputPath); 

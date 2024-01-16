@@ -14,7 +14,7 @@ def get_args() -> Namespace:
     1. file_path: path to csv file containing data.
     2. output_type: type of output of the analysis
     3. output_folder: path to folder where the analysis output should be daved
-    4. pixel_measurements: whether you want your results to be measured in pixels (True) or nm (False)
+    4. pixel_measurements: whether you want your results to be measured in pixels (True) or microns (False)
 
     :return: Namespace containing CLI arguments
     """
@@ -33,7 +33,7 @@ def generate_graph_for_csv(file_path: str, output_type: str, output_folder: str,
     :param file_path: Path to the file
     :param output_type: Type of output graph
     :param output_folder: Path to output folder
-    :param pixel_measurements: whether you want your results to be measured in pixels (True) or nm (False)
+    :param pixel_measurements: whether you want your results to be measured in pixels (True) or microns (False)
     """
     diameter_measurements = read_diameter_measurements(file_path)
     file_name = extract_file_name(file_path)
@@ -45,6 +45,5 @@ if __name__ == '__main__':
     Entry point of the application.
     """
     args = get_args()
-    print(args.pixel_measurements)
 
     generate_graph_for_csv(args.file_path, args.output_type, args.output_folder, True if args.pixel_measurements == 'true' else False)
