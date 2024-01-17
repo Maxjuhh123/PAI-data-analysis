@@ -4,12 +4,13 @@ Module for data analysis (visualization).
 from typing import List
 
 import numpy as np
+
 from measurement import Measurement
 from diameter_measurement import DiameterMeasurement, filter_diameter_measurements
 from branch_measurement import BranchMeasurement
 from file_utils import save_figure
 import matplotlib.pyplot as plt
-
+from scipy.stats import norm
 
 HISTOGRAM_BIN_WIDTH = np.sqrt(2) + 0.0000001
 MAX_DIAMETER = 100  # in microns
@@ -81,6 +82,12 @@ def generate_histogram(measurements: List[DiameterMeasurement], output_folder_pa
     plt.title('Histogram of Vessel Diameters')
     plt.ylabel('Probability')
     plt.xlabel(f'Vessel diameter {"(pixels)" if pixel_measurements else "(microns)"}')
+
+    # Gaussian Fit
+    (mu, sigma) = norm.fit(diameters)
+    y = norm.pdf(bins, mu, sigma)
+    plt.plot(bins, y, 'r--', linewidth=2, label=f'Gaussian Fit: μ={mu} σ={sigma}')
+    plt.legend()
 
     save_path = output_folder_path + f'/{file_name}-hist.png'
     save_figure(save_path)

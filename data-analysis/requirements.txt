@@ -1,3 +1,4 @@
 argparse==1.4.0
 matplotlib==3.8.2
 numpy==1.26.3
+SciPy==1.11.4
