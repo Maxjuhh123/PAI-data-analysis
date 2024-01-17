@@ -54,7 +54,7 @@ function estimateVesselDiameter(v1x, v1y, v2x, v2y, binaryMaskName) {
     y2 = midY + length / 2 * Math.sin(perpendicularAngle);
 
     // Get mask of perpendicular line
-    WAIT_TIME_MS = 3; // Waiting time after creating a mask, increase value if program crashes
+    WAIT_TIME_MS = 30; // Waiting time after creating a mask, increase value if program crashes
     makeLine(x1, y1, x2, y2);
     run("Create Mask");
     wait(WAIT_TIME_MS);

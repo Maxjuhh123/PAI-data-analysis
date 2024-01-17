@@ -71,12 +71,13 @@ def generate_histogram(measurements: List[DiameterMeasurement], output_folder_pa
     :param pixel_measurements: Whether you want your results to be measured in pixels (True) or microns (False)
     """
     diameters = filter_diameter_measurements(measurements, MAX_DIAMETER, pixel_measurements)
+
+    # Histogram
     bins_start = 0
     bins_end = int(np.ceil(max(diameters)))
     bins_step = int(np.ceil(min(diameters)))
     bins = [i for i in range(bins_start, bins_end, bins_step)]
     plt.hist(diameters, density=True, bins=bins)
-
     plt.title('Histogram of Vessel Diameters')
     plt.ylabel('Probability')
     plt.xlabel(f'Vessel diameter {"(pixels)" if pixel_measurements else "(microns)"}')
