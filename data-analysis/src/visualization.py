@@ -97,16 +97,22 @@ def generate_histogram(measurements: List[DiameterMeasurement], output_folder_pa
     mu_fit, sigma_fit = params
 
     # Generate the fitted normal distribution
-    fitted_distribution = normal_distribution(bin_centers, mu_fit, sigma_fit)
+    x_range = [i for i in range(int(min(diameters)) - 1, int(max(diameters)) + 1)]
+    fitted_distribution = normal_distribution(x_range, mu_fit, sigma_fit)
 
     # Plot the histogram and the fitted distribution
     plt.bar(bin_centers, hist, width=np.diff(bin_edges), label='Histogram')
-    plt.plot(bin_centers, fitted_distribution, 'r-', label=f'mean={mu_fit} sd={sigma_fit}')
+    plt.plot(x_range, fitted_distribution, 'r-', label=f'mean={np.round(mu_fit, 2)}, SD={np.round(sigma_fit, 2)}')
 
-    plt.xlabel('Diameters')
-    plt.ylabel('Probability Density')
-    plt.legend()
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.25), ncol=2)  # Adjust the ncol as needed
+    plt.xlabel('Diameter (nm)')
+    plt.ylabel('Density')
 
+    plt.tight_layout()
+
+    # Increase the height of the figure
+    fig = plt.gcf()
+    fig.set_size_inches(fig.get_size_inches()[0] + 1, fig.get_size_inches()[1] + 2)
     save_path = output_folder_path + f'/{file_name}-hist.png'
     save_figure(save_path)
 
