@@ -121,9 +121,6 @@ function getOriginalBinaryImage(filePath) {
  * Analyze the blood vessel density (area).
  */
 function analyzeArea(filePath, row) {
-	getOriginalBinaryImage(filePath);
-	preProcessImage();
-	
 	run("Clear Results");
 	run("Set Measurements...", "area mean min centroid perimeter area_fraction redirect=None decimal=2"); 
 	run("Measure"); 
@@ -152,8 +149,6 @@ function analyzeArea(filePath, row) {
  * Analyze the vessel lengths.
  */
 function analyzeVesselLength(filePath, row) {
-	getOriginalBinaryImage(filePath);
-	
 	run("Clear Results");
 	run("Set Measurements...", "area mean min centroid perimeter area_fraction redirect=None decimal=2"); 
 	run("Duplicate...", " "); 
@@ -168,7 +163,6 @@ function analyzeVesselLength(filePath, row) {
  */
 function analyzeBranches(filePath, row) {
 	// Analyze original binary image
-	getOriginalBinaryImage(filePath);
 	run("Clear Results");
 	run("Set Measurements...", "area_fraction area mean min centroid perimeter redirect=None decimal=2"); 
 	run("Duplicate...", " "); 
@@ -200,6 +194,7 @@ function analyzeBranches(filePath, row) {
 	// Save branch information to separate file
 	selectWindow("Branch information");
 	saveAs("Results", filePath + "-branch-info.csv");
+	close("Branch information");
 	selectWindow("Results");
 }
 
@@ -231,6 +226,8 @@ function analyzeVesselDistances(filePath, row) {
 function processFile(filePath, row) {
 	print("Analyzing: " + filePath + "...");
 	run("Clear Results");
+	getOriginalBinaryImage(filePath);
+	labels[row] = filePath;
 	
 	//1 Area fraction 
 	analyzeArea(filePath, row);
@@ -243,9 +240,6 @@ function processFile(filePath, row) {
 	
 	//4 Nearest neighbor distance 
 	analyzeVesselDistances(filePath, row);
-	
-	// Update result arrays
-	labels[row] = filePath;
 	
 	close("*");
 	close("Results");
