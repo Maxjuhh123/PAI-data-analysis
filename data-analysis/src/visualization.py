@@ -4,13 +4,16 @@ Module for data analysis (visualization).
 from typing import List
 
 import numpy as np
+from scipy.optimize import curve_fit
 
 from measurement import Measurement
 from diameter_measurement import DiameterMeasurement, filter_diameter_measurements
 from branch_measurement import BranchMeasurement
 from file_utils import save_figure
 import matplotlib.pyplot as plt
-from scipy.stats import norm
+from scipy.stats import poisson
+from scipy.stats import norm, binom
+from scipy.optimize import curve_fit
 
 HISTOGRAM_BIN_WIDTH = np.sqrt(2) + 0.0000001
 MAX_DIAMETER = 100  # in microns
@@ -73,20 +76,35 @@ def generate_histogram(measurements: List[DiameterMeasurement], output_folder_pa
     """
     diameters = filter_diameter_measurements(measurements, MAX_DIAMETER, pixel_measurements)
 
-    # Histogram
-    bins_start = 0
-    bins_end = int(np.ceil(max(diameters)))
-    bins_step = int(np.ceil(min(diameters)))
-    bins = [i for i in range(bins_start, bins_end, bins_step)]
-    plt.hist(diameters, density=True, bins=bins)
-    plt.title('Histogram of Vessel Diameters')
-    plt.ylabel('Probability')
-    plt.xlabel(f'Vessel diameter {"(pixels)" if pixel_measurements else "(microns)"}')
+    bin_width = int(min(diameters))
+    hist, bin_edges = np.histogram(diameters, bins=np.arange(min(diameters), max(diameters) + bin_width, bin_width), density=True)
 
-    # Gaussian Fit
-    (mu, sigma) = norm.fit(diameters)
-    y = norm.pdf(bins, mu, sigma)
-    plt.plot(bins, y, 'r--', linewidth=2, label=f'Gaussian Fit: μ={mu} σ={sigma}')
+    # Calculate bin centers
+    bin_centers = 0.5 * (bin_edges[:-1] + bin_edges[1:])
+
+    # Define the normal distribution function
+    def normal_distribution(x, mu, sigma):
+        return norm.pdf(x, mu, sigma)
+
+    # Fit the normal distribution using curve_fit
+    # Initial guess for parameters (you may need to adjust this based on your data)
+    initial_params = [np.mean(diameters), np.std(diameters)]
+
+    # Use curve_fit to find the best-fit parameters
+    params, covariance = curve_fit(normal_distribution, bin_centers, hist, p0=initial_params)
+
+    # Extract the fitted parameters
+    mu_fit, sigma_fit = params
+
+    # Generate the fitted normal distribution
+    fitted_distribution = normal_distribution(bin_centers, mu_fit, sigma_fit)
+
+    # Plot the histogram and the fitted distribution
+    plt.bar(bin_centers, hist, width=np.diff(bin_edges), label='Histogram')
+    plt.plot(bin_centers, fitted_distribution, 'r-', label=f'mean={mu_fit} sd={sigma_fit}')
+
+    plt.xlabel('Diameters')
+    plt.ylabel('Probability Density')
     plt.legend()
 
     save_path = output_folder_path + f'/{file_name}-hist.png'
