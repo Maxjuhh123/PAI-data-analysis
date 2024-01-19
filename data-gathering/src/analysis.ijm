@@ -159,11 +159,16 @@ function analyzeBranches(filePath, row) {
 	
 	// Save branch analysis results to file
 	selectWindow("Results");
-	saveAs("Results", filePath + "-branch-analysis.csv");
-	
+	ind = lastIndexOf(filePath, "/");
+	folder = substring(filePath, 0, ind);
+	fileName = substring(filePath, ind + 1);
+	savePath = folder + "../data/branch-data/" + fileName + ".csv";
+	saveAs("Results", savePath);
+
 	// Save branch information to file
 	selectWindow("Branch information");
-	saveAs("Results", filePath + "-branch-info.csv");
+	savePath = folder + "../data/branch-data/" + fileName + "-branch-info" + ".csv";
+	saveAs("Results", savePath);
 	close("Branch information");
 	selectWindow("Results");
 }
@@ -222,7 +227,7 @@ function processFile(filePath, row) {
  * Save the results table to a csv file.
  */
 function saveResultsToFile(folderPath) {
-	outputPath = folderPath + "/output.csv";
+	outputPath = folderPath + "/../data/output.csv";
 	saveAs("Results", outputPath); 
 	print("Saved results to: " + outputPath);
 }
