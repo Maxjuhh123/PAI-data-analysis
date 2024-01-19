@@ -10,18 +10,19 @@ class BranchMeasurement(Measurement):
     Class to represent branch measurements.
     """
 
-    def __init__(self, measurement_id: int, label: str, area_percentage: float, vasculature_length: float, num_branches: int,
-                 avg_branch_length: float, max_branch_length: float, mean_vessel_distance: float,
-                 min_vessel_distance: float):
+    def __init__(self, measurement_id: int, branch_count: int, junction_count: int, end_point_voxel_count: int,
+                 junction_voxel_count: int, slab_voxel_count: int, avg_branch_length: float, triple_point_count: int,
+                 quadruple_point_count: int, max_branch_length: float):
         self.measurement_id = measurement_id
-        self.label = label
-        self.area_percentage = area_percentage
-        self.vasculature_length = vasculature_length
-        self.num_branches = num_branches
+        self.branch_count = branch_count
+        self.junction_count = junction_count
+        self.end_point_voxel_count = end_point_voxel_count
+        self.junction_voxel_count = junction_voxel_count
+        self.slab_voxel_count = slab_voxel_count
         self.avg_branch_length = avg_branch_length
+        self.triple_point_count = triple_point_count
+        self.quadruple_point_count = quadruple_point_count
         self.max_branch_length = max_branch_length
-        self.mean_vessel_distance = mean_vessel_distance
-        self.min_vessel_distance = min_vessel_distance
 
 
 def read_branch_measurements_from_row(row: List[str]) -> BranchMeasurement:
@@ -33,12 +34,13 @@ def read_branch_measurements_from_row(row: List[str]) -> BranchMeasurement:
     """
     return BranchMeasurement(
         int(row[0]),
-        row[1],
-        float(row[2]),
-        float(row[3]),
+        int(row[1]),
+        int(row[2]),
+        int(row[3]),
         int(row[4]),
-        float(row[5]),
+        int(row[5]),
         float(row[6]),
-        float(row[7]),
-        float(row[8])
+        int(row[7]),
+        int(row[8]),
+        float(row[9])
     )

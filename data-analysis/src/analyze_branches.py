@@ -1,38 +1,66 @@
 """
 Module for analyzing branches.
 """
+import csv
+import os
+from typing import List
 
-from argparse import Namespace, ArgumentParser
-from file_utils import read_branch_measurements, extract_file_name
-from visualization import generate_analysis_visualization
+from matplotlib import pyplot as plt
+from file_utils import save_figure
+from branch_measurement import BranchMeasurement, read_branch_measurements_from_row
 
 
-def get_args() -> Namespace:
+def read_branch_measurements(file_path: str) -> List[BranchMeasurement]:
     """
-    Get arguments from command line.
+    Read branch measurements of a single image from a csv file.
 
-    :return: Namespace containing arguments
+    :param file_path: Path to csv file
+    :return: The list of branch measurements
     """
-    parser = ArgumentParser()
-    parser.add_argument('--file_path', type=str, default='../resources/output.csv')
-    parser.add_argument('--output_path', type=str, default='../resources/output')
-    return parser.parse_args()
+    csv_file = open(file_path)
+    reader = csv.reader(csv_file)
+
+    # Skip header row
+    next(reader, None)
+
+    return [read_branch_measurements_from_row(row) for row in reader]
 
 
-def generate_branch_graphs(file_path: str, output_folder: str) -> None:
+def scatterplot_junctions_and_branches(branch_measurements: List[BranchMeasurement], file_name: str) -> None:
     """
-    For a single csv file, generate the graphs and save them to the output folder.
+    Generate scatterplot of junction count and branch count.
 
-    :param file_path: Path to the file
-    :param output_folder: Path to output folder
+    :param branch_measurements: List of branch measurements
+    :param file_name: Name of original csv file
     """
-    measurements = read_branch_measurements(args.file_path)
-    file_name = extract_file_name(file_path)
-    graph_types = ['density/branch_count']
-    for output_type in graph_types:
-        generate_analysis_visualization(measurements, output_type, output_folder, file_name, False)
+    junction_counts = [x.junction_count for x in branch_measurements]
+    branch_counts = [x.branch_count for x in branch_measurements]
+
+    plt.scatter(junction_counts, branch_counts, marker='o')
+    plt.xlabel('Junctions')
+    plt.ylabel('Branches')
+
+    save_path = '../../resources/output/branch-analysis/' + file_name + ".png"
+    save_figure(save_path)
+
+
+def generate_branch_measurement_graphs(branch_measurements: List[BranchMeasurement], file_name: str) -> None:
+    """
+    Given branch measurements of an image, generate graphs.
+
+    :param branch_measurements: List of branch measurements
+    :param file_name: Name of original csv file
+    """
+    scatterplot_junctions_and_branches(branch_measurements, file_name)
 
 
 if __name__ == '__main__':
-    args = get_args()
-    generate_branch_graphs(args.file_path, args.output_path)
+    measurement_paths = os.listdir('../../resources/data/branch-data')
+    # Skip branch info files
+    measurement_paths = [path for path in measurement_paths if 'branch-info' not in path]
+
+    # Generate graphs for each image data file
+    for path in measurement_paths:
+        csv_path = '../../resources/data/branch-data/' + path
+        measurements = read_branch_measurements(csv_path)
+        generate_branch_measurement_graphs(measurements, path)
