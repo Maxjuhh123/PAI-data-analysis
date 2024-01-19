@@ -21,8 +21,8 @@ fileCount = 0;
 for (row = 0; row < files.length; row++) {
 	filePath = folderPath + "/" + files[row];
 	// Only process images
-	if (!endsWith(filePath, ".csv")) {
-		fileCount++;
+	if (endsWith(filePath, ".jpg") || endsWith(filePath, ".png") || endsWith(filePath, ".jpeg")) {
+		processFile(filePath, row);
 	}
 }
 
@@ -55,7 +55,7 @@ var sdVesselDistances = newArray;
 for (row = 0; row < files.length; row++) {
 	filePath = folderPath + "/" + files[row];
 	// Only process images
-	if (!endsWith(filePath, ".csv")) {
+	if (endsWith(filePath, ".jpg") || endsWith(filePath, ".png") || endsWith(filePath, ".jpeg")) {
 		processFile(filePath, row);
 	}
 }
@@ -73,15 +73,15 @@ for (i = 0; i < fileCount; i++) {
 	setResult("Y", i, ys[i]);
 	setResult("Perimeter", i, perims[i]);
 	setResult("Vasculature Length", i, vasculatureLengths[i]);	
-	setResult("Branch Count", i, numBranchesList[i]);	
-	setResult("Junction Count", i, numJunctionsList[i]);	
-	setResult("Endpoint Voxel Count", i, numEndpointVoxelsList[i]);	
-	setResult("Junction Voxel Count", i, numJunctionVoxelsList[i]);	
-	setResult("Slab Voxel Count", i, numSlabVoxelsList[i]);	
-	setResult("Average Branch Length", i, averageBranchLengths[i]);	
-	setResult("Triple Points Count", i, numTriplePointsList[i]);	
-	setResult("Quadruple Points Count", i, numQuadruplePointsList[i]);	
-	setResult("Maximum Branch Length", i, maximumBranchLengths[i]);	 
+//	setResult("Branch Count", i, numBranchesList[i]);	
+//	setResult("Junction Count", i, numJunctionsList[i]);	
+//	setResult("Endpoint Voxel Count", i, numEndpointVoxelsList[i]);	
+//	setResult("Junction Voxel Count", i, numJunctionVoxelsList[i]);	
+//	setResult("Slab Voxel Count", i, numSlabVoxelsList[i]);	
+//	setResult("Average Branch Length", i, averageBranchLengths[i]);	
+//	setResult("Triple Points Count", i, numTriplePointsList[i]);	
+//	setResult("Quadruple Points Count", i, numQuadruplePointsList[i]);	
+//	setResult("Maximum Branch Length", i, maximumBranchLengths[i]);	 
 	setResult("Max Vessel Distance", i, maxVesselDistances[i]);
 	setResult("Mean Vessel Distance", i, meanVesselDistances[i]);
 	setResult("Min Vessel Distance", i, minVesselDistances[i]);
@@ -162,34 +162,47 @@ function analyzeVesselLength(filePath, row) {
  * Analyze branches in an image.
  */
 function analyzeBranches(filePath, row) {
-	// Analyze original binary image
 	run("Clear Results");
+	open(filePath);
+	run("8-bit");
+	run("Median...", "radius=1");
+	setOption("BlackBackground", true);
+	setThreshold(66, 255); 
+	run("Convert to Mask"); 
+	run("Analyze Particles...", "size=20-Infinity show=Masks");
 	run("Set Measurements...", "area_fraction area mean min centroid perimeter redirect=None decimal=2"); 
-	run("Duplicate...", " "); 
-	run("Skeletonize");
-	run("Analyze Skeleton (2D/3D)", "prune=none show"); 
+	run("Skeletonize (2D/3D)");
+	run("Analyze Skeleton (2D/3D)", "prune=none prune_0 show display");
 	
-	// Extract results from table
-	numBranches = getResult("# Branches", 0);
-	numJunctions = getResult("# Junctions", 0);
-	numEndpointVoxels = getResult("# End-point voxels", 0);
-	numJunctionVoxels = getResult("# Junction voxels", 0);
-	numSlabVoxels = getResult("# Slab voxels", 0);
-	averageBranchLength = getResult("Average Branch Length", 0);
-	numTriplePoints = getResult("# Triple points", 0);
-	numQuadruplePoints = getResult("# Quadruple points", 0);
-	maximumBranchLength = getResult("Maximum Branch Length", 0);
-
-	// Save results in arrays
-	numBranchesList[row] = numBranches;
-	numJunctionsList[row] = numJunctions;
-	numEndpointVoxelsList[row] = numEndpointVoxels;
-	numJunctionVoxelsList[row] = numJunctionVoxels;
-	numSlabVoxelsList[row] = numSlabVoxels;
-	averageBranchLengths[row] = averageBranchLength;
-	numTriplePointsList[row] = numTriplePoints;
-	numQuadruplePointsList[row] = numQuadruplePoints;
-	maximumBranchLengths[row] = maximumBranchLength;
+	// Analyze original binary image
+//	run("Clear Results");
+//	run("Set Measurements...", "area_fraction area mean min centroid perimeter redirect=None decimal=2"); 
+//	run("Duplicate...", " "); 
+//	run("Skeletonize");
+//	run("Analyze Skeleton (2D/3D)", "prune_0 prune=none show"); 
+	// Save branch analysis results to file
+	selectWindow("Results");
+	saveAs("Results", filePath + "-branch-analysis.csv");
+//	numBranches = getResult("# Branches", 0);
+//	numJunctions = getResult("# Junctions", 0);
+//	numEndpointVoxels = getResult("# End-point voxels", 0);
+//	numJunctionVoxels = getResult("# Junction voxels", 0);
+//	numSlabVoxels = getResult("# Slab voxels", 0);
+//	averageBranchLength = getResult("Average Branch Length", 0);
+//	numTriplePoints = getResult("# Triple points", 0);
+//	numQuadruplePoints = getResult("# Quadruple points", 0);
+//	maximumBranchLength = getResult("Maximum Branch Length", 0);
+//
+//	// Save results in arrays
+//	numBranchesList[row] = numBranches;
+//	numJunctionsList[row] = numJunctions;
+//	numEndpointVoxelsList[row] = numEndpointVoxels;
+//	numJunctionVoxelsList[row] = numJunctionVoxels;
+//	numSlabVoxelsList[row] = numSlabVoxels;
+//	averageBranchLengths[row] = averageBranchLength;
+//	numTriplePointsList[row] = numTriplePoints;
+//	numQuadruplePointsList[row] = numQuadruplePoints;
+//	maximumBranchLengths[row] = maximumBranchLength;
 	
 	// Save branch information to separate file
 	selectWindow("Branch information");
@@ -241,7 +254,7 @@ function processFile(filePath, row) {
 	//4 Nearest neighbor distance 
 	analyzeVesselDistances(filePath, row);
 	
-	close("*");
+	//close("*");
 	close("Results");
 	close("Branch information");
 	close("Nearest Neighbour Distances");
