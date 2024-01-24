@@ -2,7 +2,7 @@
 pip install -r requirements.txt
 
 # Change these two values to represent the input path to the csv file and output folder path respectively
-INPUT_PATH='../resources/data/merged_data.csv'
+INPUT_PATH='../resources/data/diameter-data/532_OR_47_index0.csv'
 OUTPUT_PATH='../resources/output'
 PIXEL_MEASUREMENTS='false'
 

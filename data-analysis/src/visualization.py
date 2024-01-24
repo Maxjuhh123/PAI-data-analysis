@@ -104,9 +104,9 @@ def generate_histogram(measurements: List[DiameterMeasurement], output_folder_pa
     plt.bar(bin_centers, hist, width=np.diff(bin_edges), label='Histogram')
     plt.plot(x_range, fitted_distribution, 'r-', label=f'mean={np.round(mu_fit, 2)}, SD={np.round(sigma_fit, 2)}')
 
-    plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.25), ncol=2)  # Adjust the ncol as needed
-    plt.xlabel('Diameter (nm)')
-    plt.ylabel('Density')
+    plt.title('Diameter Histogram and Gaussian Fit', fontdict={'weight': 'bold', 'size': 14})
+    plt.xlabel('Diameter (μm)', fontdict={'size': 12})
+    plt.ylabel('Density', fontdict={'size': 12})
 
     plt.tight_layout()
 
